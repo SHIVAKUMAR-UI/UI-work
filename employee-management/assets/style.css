@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    }
+    body {
+    font-family: Roboto, Helvetica, sans-serif;
+    }
+    /* Fix the button on the left side of the page */
+    .open-btn {
+    display: flex;
+    justify-content: left;
+    }
+    
+    /* Position the Popup form */
+    .popup {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    }
+    /* Hide the Popup form */
+    .form-popup {
+    display: none;
+    position: fixed;
+    left: 45%;
+    top:5%;
+    transform: translate(-45%,5%);
+    border: 2px solid #666;
+    z-index: 9;
+    }
+    /* Styles for the form container */
+    .form-container {
+    max-width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    }
+    /* Full-width for input fields */
+    .form-container input[type=text], select {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 22px 0;
+    border: none;
+    background: #eee;
+    }
+    /* When the inputs get focus, do something */
+    .form-container input[type=text]:focus, , select:focus {
+    background-color: #ddd;
+    outline: none;
+    }
+    
+    /* Hover effects for buttons */
+    .form-container .btn:hover, .open-button:hover {
+    opacity: 1;
+    }
