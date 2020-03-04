@@ -1,32 +1,22 @@
 var departmentData = [];
-var ENDPOINT = "";
-function viewDepartment() {}
+var ENDPOINT = "http://206.189.72.24:8000";
+
+viewDepartment = () => {}
 
 function getDepartmentList() {
   console.log("Get department List");
 
-  //   $.get(`${ENDPOINT}/api/department/list`, function(data, status){
+  $.get(`${ENDPOINT}/api/department/list`, function(data, status) {
+    departmentData = [...data];
+    populateDepartmentDataIntoTable(departmentData);
+    getEmployeeList();
+  });
+}
 
-  //   });
-
-  departmentData = [
-    {
-      department_id: "6f4628ff-11c9-4ba7-98cd-1909383ce578",
-      name: "Operations",
-      created_at: "2020-02-05T05:50:40.610441Z",
-      updated_at: "2020-02-05T05:50:40.610503Z"
-    },
-    {
-      department_id: "6f4628ff-11c9-4ba7-98cd-1909383ce570",
-      name: "Operations",
-      created_at: "2020-02-05T05:50:40.610441Z",
-      updated_at: "2020-02-05T05:50:40.610503Z"
-    }
-  ];
-
+populateDepartmentDataIntoTable = data => {
   let html = "";
   let index = 1;
-  $.each(departmentData, function(key, value) {
+  $.each(data, function(key, value) {
     html += `<tr>`;
     html += `<td> ${index++} </td>`;
     html += `<td> ${value.name} </td>`;
@@ -36,9 +26,9 @@ function getDepartmentList() {
     html += `</tr>`;
   });
   $("#departmentTable tbody").html(html);
-}
+};
 
-function createDepartment() {
+createDepartment = () => {
   console.log("createDepartment");
   $.post(
     `${ENDPOINT}/api/department/add`,
@@ -47,36 +37,43 @@ function createDepartment() {
     },
     function(data, status) {
       console.log(data);
+      getDepartmentList();
+      closeDepartmentForm();
     }
   );
-  getDepartmentList();
 }
 
-function editDepartment(_department) {
+editDepartment = _department => {
   console.log("editDepartment", _department);
   console.log("data", departmentData);
   let selectedDepartment = departmentData.find(department => {
     return _department === department.department_id;
   });
-
+  document.getElementById("createDepartmentButton").style.display = "none";
+  document.getElementById("updateDepartmentButton").style.display = "";
   openDepartmentForm(selectedDepartment);
 }
 
-function updateDepartment(_department) {
+updateDepartment = () => {
+  let _department = document.getElementById("departmentId").value;
   console.log("updateDepartment", _department);
-  $.put(
-    `${ENDPOINT}/api/department/interact/${_department}`,
-    {
+  $.post({
+    url: `${ENDPOINT}/api/department/interact/${_department}`,
+    data: {
       name: document.getElementById("departmentName").value
     },
-    function(data, status) {
+    success: function(data, status) {
       console.log(data);
       getDepartmentList();
+      closeDepartmentForm();
+    },
+    error: function(xhr, data, error) {
+      console.log("error", error);
     }
-  );
+  });
 }
 
-function deleteDepartment(_department) {
+deleteDepartment = _department => {
   console.log("deleteDepartment");
   $.delete(`${ENDPOINT}/api/department/interact/${_department}`, function(
     data,
@@ -87,19 +84,29 @@ function deleteDepartment(_department) {
   });
 }
 
-function openDepartmentForm(department) {
+newDepartment = () => {
+  document.getElementById("createDepartmentButton").style.display = "";
+  document.getElementById("updateDepartmentButton").style.display = "none";
+  openDepartmentForm();
+};
+
+openDepartmentForm = department => {
   console.log("openDepartmentForm department", department);
   if (department) {
     document.getElementById("departmentName").value = department.name;
+    document.getElementById("departmentId").value = department.department_id;
+  } else {
+    document.getElementById("departmentName").value = "";
+    document.getElementById("departmentId").value = "";
   }
   document.getElementById("departmentForm").style.display = "block";
-}
+};
 
-function closeDepartmentForm() {
+closeDepartmentForm = () => {
   document.getElementById("departmentForm").style.display = "none";
-}
+};
 
-function formatDate(fullDate) {
+formatDate = fullDate => {
   let formattedDate = new Date(fullDate);
   let dd = formattedDate.getDate();
 
@@ -116,20 +123,20 @@ function formatDate(fullDate) {
   return formattedDate;
 }
 
-jQuery.each(["put", "delete"], function(i, method) {
-  jQuery[method] = function(url, data, callback, type) {
-    if (jQuery.isFunction(data)) {
-      type = type || callback;
-      callback = data;
-      data = undefined;
-    }
+// jQuery.each(["delete"], function(i, method) {
+//   jQuery[method] = function(url, data, callback, type) {
+//     if (jQuery.isFunction(data)) {
+//       type = type || callback;
+//       callback = data;
+//       data = undefined;
+//     }
 
-    return jQuery.ajax({
-      url: url,
-      type: method,
-      dataType: type,
-      data: data,
-      success: callback
-    });
-  };
-});
+//     return jQuery.ajax({
+//       url: url,
+//       type: method,
+//       dataType: type,
+//       data: data,
+//       success: callback
+//     });
+//   };
+// });

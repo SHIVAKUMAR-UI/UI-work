@@ -1,39 +1,28 @@
 var employeeData = [];
-var ENDPOINT = [];
-function viewEmployee() {
-  console.log("viewEmployee");
-}
+var ENDPOINT = "http://206.189.72.24:8000";
 
-function getEmployeeList() {
+getEmployeeList = () => {
   console.log("getEmployeeList");
-  //     $.get(`${ENDPOINT}/api/employee/add`, function(data, status){
-
-  //   });
-
-  employeeData = [
-    {
-      employee_id: "0805ffc3-3751-4199-926f-fe5545d2a1b2",
-      name: "M James",
-      contract_employee: false,
-      age: 29,
-      address: "52, Jefferson Street, NY",
-      department: null
+  $.get({
+    url: `${ENDPOINT}/api/employee/list`,
+    success: function(data, status) {
+      employeeData = [...data];
+      populateEmployeeDataIntoTable(employeeData, departmentData);
     },
-    {
-      employee_id: "ee48d086-cd70-4465-9cb8-5bacf26c4295",
-      name: "M James",
-      contract_employee: false,
-      age: 29,
-      address: "52, Jefferson Street, NY",
-      department: "6f4628ff-11c9-4ba7-98cd-1909383ce578"
+    error: function(xhr, status, error) {
+      console.log("xhr= ", xhr);
+      console.log("status= ", status);
+      console.log("error= ", error);
     }
-  ];
+  });
+};
 
+populateEmployeeDataIntoTable = (data, depData) => {
   let html = "";
   let index = 1;
-  $.each(employeeData, function(key, value) {
-    console.log("departmentData", departmentData);
-    let matchedDepartment = departmentData.find(department => {
+  $.each(data, function(key, value) {
+    console.log("departmentData", depData);
+    let matchedDepartment = depData.find(department => {
       return department.department_id === value.department;
     });
     html += `<tr>`;
@@ -48,39 +37,49 @@ function getEmployeeList() {
     html += `</tr>`;
   });
   $("#employeeTable tbody").html(html);
-}
+};
 
-function createEmployee() {
+createEmployee = () => {
   console.log("createEmployee");
 
-  $.post(
-    `${ENDPOINT}/api/employee/list`,
-    {
+  $.post({
+    url: `${ENDPOINT}/api/employee/add`,
+    data: {
       name: document.getElementById("employeeName").value,
       contract_employee: document.getElementById("contractEmployee").value,
       age: document.getElementById("employeeAge").value,
       department: document.getElementById("employeeAddress").value,
       address: document.getElementById("employeeDepartment").value
     },
-    function(data, status) {
+    success: function(data, status) {
       console.log(data);
+
+      getEmployeeList();
+    },
+    error: function(xhr, status, error) {
+      console.log(error);
     }
-  );
+  });
+};
 
-  getEmployeeList();
-}
-
-function editEmployee(_employee) {
+editEmployee = _employee => {
   console.log("editDepartment", _employee);
   console.log("data", employeeData);
   let selectedEmployee = employeeData.find(employee => {
     return _employee === employee.employee_id;
   });
-
+  document.getElementById("createEmployeeButton").style.display = "none";
+  document.getElementById("updateEmployeeButton").style.display = "";
   openEmployeeForm(selectedEmployee);
-}
+};
 
-function updateEmployee(_employee) {
+newEmployeeForm = () => {
+  document.getElementById("createEmployeeButton").style.display = "";
+  document.getElementById("updateEmployeeButton").style.display = "none";
+  openEmployeeForm();
+};
+
+updateEmployee = _employee => {
   console.log("updateEmployee");
   $.put(
     `${ENDPOINT}/api/employee/interact/${_employee}`,
@@ -96,17 +95,20 @@ function updateEmployee(_employee) {
     }
   );
   getEmployeeList();
-}
+};
 
-function deleteEmployee(_employee) {
+deleteEmployee = _employee => {
   console.log("deleteEmployee");
-  //   $.delete(`${ENDPOINT}/api/employee/interact/${_employee}`, function(data, status){
+  $.delete({
+    url: `${ENDPOINT}/api/employee/interact/${_employee}`,
+    success: function(data, status) {
+      getEmployeeList();
+    },
+    error: () => {}
+  });
+};
 
-  //   });
-  getEmployeeList();
-}
-
-function openEmployeeForm(employee) {
+openEmployeeForm = employee => {
   $("#employeeDepartment").autocomplete({
     source: departmentData.map(department => department.name)
   });
@@ -118,10 +120,16 @@ function openEmployeeForm(employee) {
     document.getElementById("employeeAge").value = employee.age;
     document.getElementById("employeeAddress").value = employee.address;
     document.getElementById("employeeDepartment").value = employee.department;
+  } else {
+    document.getElementById("employeeName").value = "";
+    document.getElementById("contractEmployee").value = "";
+    document.getElementById("employeeAge").value = "";
+    document.getElementById("employeeAddress").value = "";
+    document.getElementById("employeeDepartment").value = "";
   }
   document.getElementById("employeeForm").style.display = "block";
-}
+};
 
-function closeEmployeeForm() {
+closeEmployeeForm = () => {
   document.getElementById("employeeForm").style.display = "none";
-}
+};

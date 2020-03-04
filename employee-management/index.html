@@ -20,18 +20,20 @@
             </ul>
             <div id="tabs-1">
                 <div class="text-right">
-                    <input onclick="openDepartmentForm()" class="btn btn-primary mb-2" type="button"
+                    <input onclick="newDepartment()" class="btn btn-primary mb-2" type="button"
                         name="New Department" value="New Department" />
                 </div>
                 <div class="popup">
                     <div class="form-popup" id="departmentForm">
                         <form id="departmentCreation" class="form-container">
                             <h3>Create Department</h3>
-
+                            <input type="hidden" id="departmentId" />
                             <input type="text" id="departmentName" placeholder="Enter Department Name"
                                 name="departmentName" required>
 
-                            <button type="button" class="btn btn-primary" onclick="updateDepartment()">Create</button>
+                            
+                            <button type="button" id="createDepartmentButton" class="btn btn-primary" onclick="createDepartment()">Create</button>
+                            <button type="button" id="updateDepartmentButton" class="btn btn-primary" onclick="updateDepartment()">Update</button>
                             <button type="button" class="btn btn-danger" onclick="closeDepartmentForm()">Close</button>
                         </form>
                     </div>
@@ -54,7 +56,7 @@
             </div>
             <div id="tabs-2">
                 <div class="text-right">
-                    <input onclick="openEmployeeForm()" type="button" class="btn btn-primary mb-2" name="New Employee"
+                    <input onclick="newEmployeeForm()" type="button" class="btn btn-primary mb-2" name="New Employee"
                         value="New Employee" /></div>
                 <div class="popup">
                     <div class="form-popup" id="employeeForm">
@@ -72,7 +74,8 @@
                             <input type="text" id="employeeDepartment" />
                                 
                             <br />
-                            <button type="button" class="btn btn-primary" onclick="updateEmployee()">Create</button>
+                            <button type="button" id="createEmployeeButton" class="btn btn-primary" onclick="createEmployee()">Create</button>
+                            <button type="button" id="updateEmployeeButton" class="btn btn-primary" onclick="updateEmployee()">Update</button>
                             <button type="button" class="btn btn-danger" onclick="closeEmployeeForm()">Close</button>
                         </form>
                     </div>
@@ -100,7 +103,7 @@
         $("#tabs").tabs();
         closeDepartmentForm();
         getDepartmentList();
-        getEmployeeList();
+        
     });
 
 </script>
