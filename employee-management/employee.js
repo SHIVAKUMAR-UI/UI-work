@@ -49,7 +49,7 @@ createEmployee = () => {
       name: document.employeeForm.employeeName.value,
       contract_employee: document.employeeForm.contractEmployee.value,
       age: document.employeeForm.employeeAge.value,
-      department: document.employeeForm.employeeDepartment.value,
+      department: document.employeeForm.employeeDepartment.getAttribute("dept_id"),
       address: document.employeeForm.employeeAddress.value
     },
     success: function(data, status) {
