@@ -92,7 +92,7 @@ updateEmployee = () => {
       name: document.employeeForm.employeeName.value,
       contract_employee: document.employeeForm.contractEmployee.value,
       age: document.employeeForm.employeeAge.value,
-      department: document.employeeForm.employeeDepartment.value,
+      department: document.employeeForm.employeeDepartment.getAttribute("dept_id"),
       address: document.employeeForm.employeeAddress.value
     },
     success: function(data, status) {
@@ -122,7 +122,11 @@ deleteEmployee = _employee => {
 
 openEmployeeForm = employee => {
   $("#employeeDepartment").autocomplete({
-    source: departmentData.map(department => department.name)
+    source: departmentData.map(department => department.name),
+	 select: function (event, ui) {
+        $("#employeeDepartment").val(ui.name); // display the selected text
+        $("#employeeDepartment").attr('dept_id',ui.department_id); // save selected id to hidden input
+    }
   });
   if (employee) {
     document.employeeForm.employeeId.value = employee.employee_id;
