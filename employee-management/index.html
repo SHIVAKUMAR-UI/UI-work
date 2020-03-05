@@ -13,6 +13,13 @@
 <body>
     <div class="container mt-5">
 
+        <!-- Loading Starts -->
+        <div id="loading" class="spinner-border text-danger loadingSpinner" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <!-- Loading Ends -->
+
+        <!-- Tabs Start -->
         <div id="tabs" class="mt-5">
             <ul class="nav nav-tabs">
                 <li><a href="#tabs-1">Departments</a></li>
@@ -20,24 +27,30 @@
             </ul>
             <div id="tabs-1">
                 <div class="text-right">
-                    <input onclick="newDepartment()" class="btn btn-primary mb-2" type="button"
-                        name="New Department" value="New Department" />
+                    <input onclick="newDepartment()" class="btn btn-primary mb-2" type="button" name="New Department"
+                        value="New Department" />
                 </div>
+                <!-- Departments Popup Starts -->
                 <div class="popup">
                     <div class="form-popup" id="departmentForm">
-                        <form id="departmentCreation" class="form-container">
+                        <form id="departmentCreation" name="departmentForm" class="form-container">
                             <h3>Create Department</h3>
                             <input type="hidden" id="departmentId" />
-                            <input type="text" id="departmentName" placeholder="Enter Department Name"
-                                name="departmentName" required>
+                            <input type="text" id="departmentName" maxlength=20 minlength=1
+                                placeholder="Enter Department Name" name="departmentName"
+                                required>
+                            <div class="text-danger" name="dNameError" id="dNameError"></div>
 
-                            
-                            <button type="button" id="createDepartmentButton" class="btn btn-primary" onclick="createDepartment()">Create</button>
-                            <button type="button" id="updateDepartmentButton" class="btn btn-primary" onclick="updateDepartment()">Update</button>
+                            <button type="button" id="createDepartmentButton" class="btn btn-primary"
+                                onclick="createDepartment()">Create</button>
+                            <button type="button" id="updateDepartmentButton" class="btn btn-primary"
+                                onclick="updateDepartment()">Update</button>
                             <button type="button" class="btn btn-danger" onclick="closeDepartmentForm()">Close</button>
                         </form>
                     </div>
                 </div>
+                <!-- Departments Popup Ends -->
+
                 <table id="departmentTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -50,36 +63,41 @@
                     </thead>
                     <tbody></tbody>
                 </table>
-
-
-
             </div>
+
             <div id="tabs-2">
                 <div class="text-right">
                     <input onclick="newEmployeeForm()" type="button" class="btn btn-primary mb-2" name="New Employee"
                         value="New Employee" /></div>
+                <!-- Employee Popup Starts -->
                 <div class="popup">
                     <div class="form-popup" id="employeeForm">
-                        <form class="form-container">
+                        <form class="form-container" name="employeeForm">
                             <h3>Create Employee</h3>
-
-                            <input type="text" id="employeeName" placeholder="Enter Employee Name" name="employeeName"
-                                required>
-                            <input type="text" id="contractEmployee" placeholder="Enter Contract Employee"
-                                name="contractEmployee" required>
-                            <input type="text" id="employeeAge" placeholder="Enter Employee Age" name="employeeAge"
-                                required>
-                            <input type="text" id="employeeAddress" placeholder="Enter Employee Address"
+                            <input type="hidden" id="employeeId" />
+                            <input type="text" maxlength=20 minlength=10 id="employeeName"
+                                placeholder="Enter Employee Name" name="employeeName" required>
+                            <div class="text-danger" id="eNameError" name="eNameError"></div>
+                            <input type="checkbox" id="contractEmployee" name="contractEmployee">Contract Employee
+                            </input>
+                            <input type="text" maxlength=2 id="employeeAge" placeholder="Enter Employee Age"
+                                name="employeeAge" required>
+                                <div class="text-danger" id="eAgeError" name="eNameError"></div>
+                            <input type="text" maxlength=100 id="employeeAddress" placeholder="Enter Employee Address"
                                 name="employeeAddress" required>
-                            <input type="text" id="employeeDepartment" />
-                                
+                                <div class="text-danger" id="eAddrError" name="eNameError"></div>
+                            <input type="text" id="employeeDepartment" name="employeeDepartment" />
+                            <div class="text-danger" id="eDeptError" name="eNameError"></div>
                             <br />
-                            <button type="button" id="createEmployeeButton" class="btn btn-primary" onclick="createEmployee()">Create</button>
-                            <button type="button" id="updateEmployeeButton" class="btn btn-primary" onclick="updateEmployee()">Update</button>
+                            <button type="button" id="createEmployeeButton" class="btn btn-primary"
+                                onclick="createEmployee()">Create</button>
+                            <button type="button" id="updateEmployeeButton" class="btn btn-primary"
+                                onclick="updateEmployee()">Update</button>
                             <button type="button" class="btn btn-danger" onclick="closeEmployeeForm()">Close</button>
                         </form>
                     </div>
                 </div>
+                <!-- Employee Popup Ends -->
                 <table id="employeeTable" class="table table-striped">
                     <thead>
                         <tr>
@@ -88,22 +106,48 @@
                             <th scope="col">Contract Employee</th>
                             <th scope="col">Age</th>
                             <th scope="col">Address</th>
-                            <th scope="col">department</th>
+                            <th scope="col">Department</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
+
+        </div><!-- Tabs End -->
+        <!-- Toaster -->
+        <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+            <!-- Position it -->
+            <div style="position: fixed; top: 0; right: 0;">
+
+                <!-- Then put toasts within -->
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="mr-auto">Information</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                    </div>
+                </div>
+            </div>
         </div>
+        <!-- Toaster Ends -->
     </div>
 </body>
 <script>
     $(function () {
         $("#tabs").tabs();
+        let option = {
+            animation: true,
+            autohide: true,
+            delay: 2000
+        }
+        $('.toast').toast(option);
         closeDepartmentForm();
         getDepartmentList();
-        
+
     });
 
 </script>

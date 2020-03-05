@@ -1,17 +1,32 @@
 var departmentData = [];
 var ENDPOINT = "http://206.189.72.24:8000";
 
-viewDepartment = () => {}
+toggleLoading = display => {
+  document.getElementById("loading").style.display = display;
+};
 
-function getDepartmentList() {
-  console.log("Get department List");
+showToaster = message => {
+  $(".toast").toast("show");
+  $(".toast .toast-body").html(message);
+};
 
-  $.get(`${ENDPOINT}/api/department/list`, function(data, status) {
-    departmentData = [...data];
-    populateDepartmentDataIntoTable(departmentData);
-    getEmployeeList();
+getDepartmentList = () => {
+  toggleLoading("");
+  $.get({
+    url: `${ENDPOINT}/api/department/list`,
+    success: function(data, status) {
+      toggleLoading("none");
+
+      departmentData = [...data];
+      populateDepartmentDataIntoTable(departmentData);
+      getEmployeeList();
+    },
+    error: function(xhr, status, error) {
+      showToaster(error || "Unable to Get Department List");
+      toggleLoading("none");
+    }
   });
-}
+};
 
 populateDepartmentDataIntoTable = data => {
   let html = "";
@@ -22,82 +37,94 @@ populateDepartmentDataIntoTable = data => {
     html += `<td> ${value.name} </td>`;
     html += `<td> ${formatDate(value.created_at)} </td>`;
     html += `<td> ${formatDate(value.updated_at)} </td>`;
-    html += `<td><a href="javascript:void(0)" class="mr-2" onclick="editDepartment('${value.department_id}')">Edit</a><a href="javascript:void(0)" onclick="deleteDepartment('${value.department_id}')">Delete</a></td>`;
+    html += `<td><a href="javascript:void(0)" class="mr-2" onclick="editDepartment('${value.department_id}')">Edit</a> | <a href="javascript:void(0)" onclick="deleteDepartment('${value.department_id}')">Delete</a></td>`;
     html += `</tr>`;
   });
   $("#departmentTable tbody").html(html);
 };
 
 createDepartment = () => {
-  console.log("createDepartment");
-  $.post(
-    `${ENDPOINT}/api/department/add`,
-    {
-      name: document.getElementById("departmentName").value
+  if (!validateDepartment()) {
+    return false;
+  }
+  toggleLoading("");
+  $.post({
+    url: `${ENDPOINT}/api/department/add`,
+    data: {
+      name: document.departmentForm.departmentName.value
     },
-    function(data, status) {
-      console.log(data);
+    success: function(data, status) {
+      toggleLoading("none");
+      showToaster("Department has been Created!");
       getDepartmentList();
       closeDepartmentForm();
+    },
+    error: function(xhr, status, error) {
+      toggleLoading("none");
+      showToaster(error || "Unable to Create Department");
     }
-  );
-}
+  });
+};
 
 editDepartment = _department => {
-  console.log("editDepartment", _department);
-  console.log("data", departmentData);
   let selectedDepartment = departmentData.find(department => {
     return _department === department.department_id;
   });
-  document.getElementById("createDepartmentButton").style.display = "none";
-  document.getElementById("updateDepartmentButton").style.display = "";
+  document.departmentForm.createDepartmentButton.style.display = "none";
+  document.departmentForm.updateDepartmentButton.style.display = "";
   openDepartmentForm(selectedDepartment);
-}
+};
 
 updateDepartment = () => {
-  let _department = document.getElementById("departmentId").value;
-  console.log("updateDepartment", _department);
+  if (!validateDepartment()) {
+    return;
+  }
+  let _department = document.departmentForm.departmentId.value;
+  toggleLoading("");
   $.post({
     url: `${ENDPOINT}/api/department/interact/${_department}`,
     data: {
-      name: document.getElementById("departmentName").value
+      name: document.departmentForm.departmentName.value
     },
     success: function(data, status) {
-      console.log(data);
+      toggleLoading("none");
+      showToaster("Department has been Updated!");
       getDepartmentList();
       closeDepartmentForm();
     },
     error: function(xhr, data, error) {
-      console.log("error", error);
+      showToaster(error || "Unable to Update Department");
+      toggleLoading("none");
     }
   });
-}
+};
 
 deleteDepartment = _department => {
-  console.log("deleteDepartment");
+  toggleLoading("");
+
   $.delete(`${ENDPOINT}/api/department/interact/${_department}`, function(
     data,
     status
   ) {
-    console.log(data);
+    toggleLoading("none");
+    showToaster("Department has been Deleted!");
     getDepartmentList();
   });
-}
+};
 
 newDepartment = () => {
-  document.getElementById("createDepartmentButton").style.display = "";
-  document.getElementById("updateDepartmentButton").style.display = "none";
+  document.departmentForm.createDepartmentButton.style.display = "";
+  document.departmentForm.updateDepartmentButton.style.display = "none";
   openDepartmentForm();
 };
 
 openDepartmentForm = department => {
-  console.log("openDepartmentForm department", department);
   if (department) {
-    document.getElementById("departmentName").value = department.name;
-    document.getElementById("departmentId").value = department.department_id;
+    document.departmentForm.departmentName.value = department.name;
+    document.departmentForm.departmentId.value = department.department_id;
   } else {
-    document.getElementById("departmentName").value = "";
-    document.getElementById("departmentId").value = "";
+    document.departmentForm.departmentName.value = "";
+    document.departmentForm.departmentId.value = "";
   }
   document.getElementById("departmentForm").style.display = "block";
 };
@@ -121,22 +148,45 @@ formatDate = fullDate => {
   }
   formattedDate = mm + "-" + dd + "-" + yyyy;
   return formattedDate;
-}
+};
 
-// jQuery.each(["delete"], function(i, method) {
-//   jQuery[method] = function(url, data, callback, type) {
-//     if (jQuery.isFunction(data)) {
-//       type = type || callback;
-//       callback = data;
-//       data = undefined;
-//     }
+jQuery.each(["delete"], function(i, method) {
+  jQuery[method] = function(url, data, callback, type) {
+    if (jQuery.isFunction(data)) {
+      type = type || callback;
+      callback = data;
+      data = undefined;
+    }
 
-//     return jQuery.ajax({
-//       url: url,
-//       type: method,
-//       dataType: type,
-//       data: data,
-//       success: callback
-//     });
-//   };
-// });
+    return jQuery.ajax({
+      url: url,
+      type: method,
+      dataType: type,
+      data: data,
+      success: callback,
+      error: function(xhr, status, error) {
+        showToaster(error || "Unable to Delete");
+      }
+    });
+  };
+});
+
+validateDepartment = () => {
+  if (document.departmentForm.departmentName.value == "") {
+    document.getElementById("dNameError").innerHTML =
+      "Please provide valid Department name";
+    document.departmentForm.departmentName.focus();
+    return false;
+  } else document.getElementById("dNameError").innerHTML = "";
+
+  return true;
+};
+
+resetDepartmentFormErrors = () => {
+  document.getElementById("dNameError").innerHTML = "";
+};
+
+var dform = document.getElementById("departmentForm");
+dform.addEventListener('change', function() {
+  validateDepartment();
+});
