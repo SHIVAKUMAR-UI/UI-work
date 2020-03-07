@@ -124,8 +124,8 @@ openEmployeeForm = employee => {
   $("#employeeDepartment").autocomplete({
     source: departmentData.map(department => department.name),
 	 select: function (event, ui) {
-        $("#employeeDepartment").val(ui.name); // display the selected text
-        $("#employeeDepartment").attr('dept_id',ui.department_id); // save selected id to hidden input
+        $("#employeeDepartment").val(ui.item.name); // display the selected text
+        $("#employeeDepartment").attr('dept_id', departmentData.find((dep)=> { return dep.name === ui.item.value}).department_id); // save selected id to hidden input
     }
   });
   if (employee) {
@@ -135,7 +135,9 @@ openEmployeeForm = employee => {
       employee.contract_employee;
     document.employeeForm.employeeAge.value = employee.age;
     document.employeeForm.employeeAddress.value = employee.address;
-    document.employeeForm.employeeDepartment.value = employee.department;
+    const department = departmentData.find((dep)=> { return dep.department_id === employee.department});
+    document.employeeForm.employeeDepartment.value = department.name;
+    document.employeeForm.employeeDepartment.setAttribute("dept_id", employee.department);
   } else {
     document.employeeForm.employeeId.value = "";
     document.employeeForm.employeeName.value = "";
@@ -195,7 +197,16 @@ resetEmployeeFormErrors = () => {
   document.getElementById("eDeptError").innerHTML = "";
 };
 
+
+function isNumber(evt) {
+  var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+  if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
+      return false;
+
+  return true;
+}   
+
 var eform = document.getElementById("employeeForm");
 eform.addEventListener('change', function() {
-  validateEmployee();
+  resetEmployeeFormErrors();
 });

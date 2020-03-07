@@ -19,6 +19,7 @@ body {
 /* Hide the Popup form */
 .form-popup {
   display: none;
+  width: 50%;
   position: fixed;
   left: 45%;
   top: 5%;
@@ -28,7 +29,7 @@ body {
 }
 /* Styles for the form container */
 .form-container {
-  max-width: 300px;
+  /* max-width: 300px; */
   padding: 20px;
   background-color: #fff;
 }
@@ -37,7 +38,7 @@ body {
 select {
   width: 100%;
   padding: 10px;
-  margin: 5px 0 22px 0;
+  margin: 1px 0 22px 0;
   border: none;
   background: #eee;
 }
@@ -59,4 +60,16 @@ select:focus {
   z-index: 9;
   top: 50%;
   left: 50%;
+}
+
+.form-container {
+  text-align: left;
+}
+
+label {
+  margin-bottom: 0em !important;
+}
+
+.form-group {
+   margin-bottom: 0rem; 
 }
