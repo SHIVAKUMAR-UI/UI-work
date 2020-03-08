@@ -135,9 +135,15 @@ openEmployeeForm = employee => {
       employee.contract_employee;
     document.employeeForm.employeeAge.value = employee.age;
     document.employeeForm.employeeAddress.value = employee.address;
+    try{
     const department = departmentData.find((dep)=> { return dep.department_id === employee.department});
     document.employeeForm.employeeDepartment.value = department.name;
     document.employeeForm.employeeDepartment.setAttribute("dept_id", employee.department);
+    } catch {
+      document.employeeForm.employeeDepartment.value = "";
+      document.employeeForm.employeeDepartment.setAttribute("dept_id", null);
+    }
+    
   } else {
     document.employeeForm.employeeId.value = "";
     document.employeeForm.employeeName.value = "";
@@ -155,30 +161,42 @@ closeEmployeeForm = () => {
 
 validateEmployee = () => {
   let isFormValidate = true;
-  if (document.employeeForm.employeeName.value == "") {
+  if (document.employeeForm.employeeName.value === "") {
     document.getElementById("eNameError").innerHTML =
       "Please provide valid Department name";
     document.employeeForm.employeeName.focus();
     isFormValidate = false;
   } else document.getElementById("eNameError").innerHTML = "";
 
-  if (document.employeeForm.employeeAge.value == "") {
+  if (document.employeeForm.employeeAge.value === "") {
     document.getElementById("eAgeError").innerHTML =
       "Please provide valid Age";
     document.employeeForm.employeeAge.focus();
     isFormValidate = false;
   } else document.getElementById("eAgeError").innerHTML = "";
 
-  if (document.employeeForm.employeeAddress.value == "") {
+  if (document.employeeForm.employeeAddress.value === "") {
     document.getElementById("eAddrError").innerHTML =
       "Please provide valid Address";
     document.employeeForm.employeeAddress.focus();
     isFormValidate = false;
   } else document.getElementById("eAddrError").innerHTML = "";
 
-  if (document.employeeForm.employeeDepartment.value == "") {
+
+  if(document.employeeForm.employeeDepartment.value !== "" && document.employeeForm.employeeDepartment.getAttribute("dept_id") === null || document.employeeForm.employeeDepartment.getAttribute("dept_id") === 'null') {
+    const dept = departmentData.find((dep)=> { return dep.name === document.employeeForm.employeeDepartment.value});
+    if(!dept) {
+      document.getElementById("eDeptError").innerHTML =
+      "Please select valid Department";
+      isFormValidate = false;
+    } else {
+      document.employeeForm.employeeDepartment.getAttribute("dept_id") = dept.department_id;
+    }
+  }
+
+  if (document.employeeForm.employeeDepartment.getAttribute("dept_id") === null || document.employeeForm.employeeDepartment.getAttribute("dept_id") === 'null') {
     document.getElementById("eDeptError").innerHTML =
-      "Please select Department";
+      "Please select valid Department";
     document.employeeForm.employeeDepartment.focus();
     isFormValidate = false;
   } else document.getElementById("eDeptError").innerHTML = "";
