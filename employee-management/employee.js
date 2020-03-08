@@ -47,7 +47,7 @@ createEmployee = () => {
     url: `${ENDPOINT}/api/employee/add`,
     data: {
       name: document.employeeForm.employeeName.value,
-      contract_employee: document.employeeForm.contractEmployee.value,
+      contract_employee: document.employeeForm.contractEmployee.checked,
       age: document.employeeForm.employeeAge.value,
       department: document.employeeForm.employeeDepartment.getAttribute("dept_id"),
       address: document.employeeForm.employeeAddress.value
@@ -90,7 +90,7 @@ updateEmployee = () => {
     url: `${ENDPOINT}/api/employee/interact/${_employee}`,
     data: {
       name: document.employeeForm.employeeName.value,
-      contract_employee: document.employeeForm.contractEmployee.value,
+      contract_employee: document.employeeForm.contractEmployee.checked,
       age: document.employeeForm.employeeAge.value,
       department: document.employeeForm.employeeDepartment.getAttribute("dept_id"),
       address: document.employeeForm.employeeAddress.value
